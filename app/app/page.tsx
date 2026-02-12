@@ -4,24 +4,25 @@ import {JSX, useState} from 'react'
 import PaginationDots from './components/PaginationDots'
 import Wheel from "@/app/pages/wheel";
 import NavBar from "@/app/components/NavBar";
-
+import Tutorial from "@/app/pages/tutorial";
+import Presentation from "@/app/pages/presentation";
 
 export enum PageDot {
-    DISCLAIMER = 'disclaimer',
+    PRESENTATION = 'presentation',
     TUTORIAL = 'tutorial',
     WHEEL = 'wheel'
 }
 
 export default function Home() {
-    const [page, setPage] = useState<PageDot>(PageDot.DISCLAIMER)
+    const [page, setPage] = useState<PageDot>(PageDot.TUTORIAL)
 
     return (
         <main style={{display: 'flex', flexDirection: 'column', alignItems: 'center', padding: 40, gap: 16}}>
-            <NavBar/>
+            <NavBar />
             {(() => {
                 const pages: Record<PageDot, JSX.Element> = {
-                    [PageDot.DISCLAIMER]: <div>Disclaimer</div>,
-                    [PageDot.TUTORIAL]: <div>Page de tutoriel</div>,
+                    [PageDot.PRESENTATION]: <Presentation />,
+                    [PageDot.TUTORIAL]: <Tutorial />,
                     [PageDot.WHEEL]: <Wheel />,
                 }
 
