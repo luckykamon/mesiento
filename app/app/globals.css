@@ -26,5 +26,26 @@ body {
 }
 
 div {
-  color: red
+  color: #062C80
+}
+
+/* Lors de l'impression */
+@media print {
+  /* On efface tout sur la page */
+  body * {
+    visibility: hidden;
+  }
+  /* On affiche uniquement la partie à imprimer */
+  #print-area, #print-area * {
+    visibility: visible;
+  }
+  /* On repositionne au centre */
+  #print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
 }
