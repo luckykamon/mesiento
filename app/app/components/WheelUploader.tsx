@@ -38,16 +38,22 @@ export default function WheelUploader({ segments, size = 300 }: Props) {
     }
 
     useEffect(() => {
-        localStorage.setItem('wheel-images', JSON.stringify(images))
+        try {
+            localStorage.setItem('wheel-images', JSON.stringify(images))
+        } catch (e) {
+            console.warn('Image persistence failed, continuing without saving.', e)
+        }
     }, [images])
 
     useEffect(() => {
-        setImages((prev) => {
-            const next = Array(segments).fill(null)
-            for (let i = 0; i < Math.min(prev.length, segments); i++) {
-                next[i] = prev[i]
-            }
-            return next
+        queueMicrotask(() => {
+            setImages((prev) => {
+                const next = Array(segments).fill(null)
+                for (let i = 0; i < Math.min(prev.length, segments); i++) {
+                    next[i] = prev[i]
+                }
+                return next
+            })
         })
     }, [segments])
 
@@ -93,16 +99,26 @@ export default function WheelUploader({ segments, size = 300 }: Props) {
                                 style={{ cursor: 'pointer' }}
                             />
 
+                            {/* ClipPath du segment (non-roté) */}
+                            <defs>
+                                <clipPath id={`clip-${i}`} clipPathUnits="userSpaceOnUse">
+                                    <path d={path} />
+                                </clipPath>
+                            </defs>
+
                             {/* Image ou icône par défaut */}
                             {images[i] ? (
-                                <image
-                                    href={images[i]!}
-                                    x={imgPos.x - 20}
-                                    y={imgPos.y - 20}
-                                    width={40}
-                                    height={40}
-                                    clipPath="circle(20px at 20px 20px)"
-                                />
+                                <g clipPath={`url(#clip-${i})`}>
+                                    <image
+                                        href={images[i]!}
+                                        x={radius - radius}
+                                        y={radius - radius}
+                                        width={radius * 2}
+                                        height={radius * 2}
+                                        preserveAspectRatio="xMidYMid slice"
+                                        transform={`rotate(${((midAngle + Math.PI / 2) * 180) / Math.PI} ${radius} ${radius})`}
+                                    />
+                                </g>
                             ) : (
                                 <text
                                     x={imgPos.x}
