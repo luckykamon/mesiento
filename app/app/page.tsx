@@ -14,7 +14,7 @@ export enum PageDot {
 }
 
 export default function Home() {
-    const [page, setPage] = useState<PageDot>(PageDot.TUTORIAL)
+    const [page, setPage] = useState<PageDot>(PageDot.PRESENTATION)
 
     return (
         <main style={{display: 'flex', flexDirection: 'column', alignItems: 'center', padding: 40, gap: 16}}>
