@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 type Props = {
     segments: number
@@ -12,9 +12,11 @@ export default function WheelUploader({ segments, size = 300 }: Props) {
     const radius = size / 2 - padding
     const innerRadius = radius * 0.45
 
-    const [images, setImages] = useState<(string | null)[]>(
-        Array(segments).fill(null)
-    )
+    const [images, setImages] = useState<(string | null)[]>(() => {
+        if (typeof window === 'undefined') return Array(segments).fill(null)
+        const stored = localStorage.getItem('wheel-images')
+        return stored ? JSON.parse(stored) : Array(segments).fill(null)
+    })
 
     const fileInputs = useRef<(HTMLInputElement | null)[]>([])
 
@@ -34,6 +36,20 @@ export default function WheelUploader({ segments, size = 300 }: Props) {
         }
         reader.readAsDataURL(file)
     }
+
+    useEffect(() => {
+        localStorage.setItem('wheel-images', JSON.stringify(images))
+    }, [images])
+
+    useEffect(() => {
+        setImages((prev) => {
+            const next = Array(segments).fill(null)
+            for (let i = 0; i < Math.min(prev.length, segments); i++) {
+                next[i] = prev[i]
+            }
+            return next
+        })
+    }, [segments])
 
     return (
         <div className="flex flex-col items-center gap-4">
@@ -77,8 +93,8 @@ export default function WheelUploader({ segments, size = 300 }: Props) {
                                 style={{ cursor: 'pointer' }}
                             />
 
-                            {/* Image */}
-                            {images[i] && (
+                            {/* Image ou icône par défaut */}
+                            {images[i] ? (
                                 <image
                                     href={images[i]!}
                                     x={imgPos.x - 20}
@@ -87,6 +103,17 @@ export default function WheelUploader({ segments, size = 300 }: Props) {
                                     height={40}
                                     clipPath="circle(20px at 20px 20px)"
                                 />
+                            ) : (
+                                <text
+                                    x={imgPos.x}
+                                    y={imgPos.y}
+                                    textAnchor="middle"
+                                    dominantBaseline="middle"
+                                    fontSize="20"
+                                    style={{ pointerEvents: 'none', userSelect: 'none' }}
+                                >
+                                    ⬆️
+                                </text>
                             )}
 
                             {/* Input caché */}

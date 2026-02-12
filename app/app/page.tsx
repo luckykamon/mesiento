@@ -12,12 +12,7 @@ export enum PageDot {
 }
 
 export default function Home() {
-
-
-
     const [page, setPage] = useState<PageDot>(PageDot.DISCLAIMER)
-
-
 
     return (
         <main style={{display: 'flex', flexDirection: 'column', alignItems: 'center', padding: 40, gap: 16}}>

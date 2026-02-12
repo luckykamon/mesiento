@@ -1,5 +1,5 @@
 import WheelUploader from "@/app/components/WheelUploader";
-import {useState} from "react";
+import { useEffect, useState } from "react";
 
 function CasesControl({value, onChange}: { value: number; onChange: (v: number) => void }) {
     return (
@@ -16,7 +16,15 @@ function CasesControl({value, onChange}: { value: number; onChange: (v: number) 
 }
 
 export default function Wheel() {
-    const [segments, setSegments] = useState(4)
+    const [segments, setSegments] = useState<number>(() => {
+        if (typeof window === "undefined") return 4
+        const stored = localStorage.getItem("wheel-segments")
+        return stored ? Number(stored) : 4
+    })
+
+    useEffect(() => {
+        localStorage.setItem("wheel-segments", String(segments))
+    }, [segments])
 
     return <>
         <CasesControl value={segments} onChange={setSegments} />
