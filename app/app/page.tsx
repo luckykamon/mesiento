@@ -3,6 +3,7 @@
 import {JSX, useState} from 'react'
 import PaginationDots from './components/PaginationDots'
 import Wheel from "@/app/pages/wheel";
+import NavBar from "@/app/components/NavBar";
 
 
 export enum PageDot {
@@ -16,6 +17,7 @@ export default function Home() {
 
     return (
         <main style={{display: 'flex', flexDirection: 'column', alignItems: 'center', padding: 40, gap: 16}}>
+            <NavBar/>
             {(() => {
                 const pages: Record<PageDot, JSX.Element> = {
                     [PageDot.DISCLAIMER]: <div>Disclaimer</div>,
