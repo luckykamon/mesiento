@@ -28,6 +28,16 @@ export default function Wheel() {
 
     return <>
         <CasesControl value={segments} onChange={setSegments} />
+        <button
+            onClick={() => {
+                localStorage.clear()
+                window.location.reload()
+            }}
+            style={{ marginTop: 10, cursor: 'pointer' }}
+            aria-label="Réinitialiser la roue"
+        >
+            🔄
+        </button>
         <div id="print-area">
             <WheelUploader segments={segments} />
         </div>

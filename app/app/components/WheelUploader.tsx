@@ -14,8 +14,14 @@ export default function WheelUploader({ segments, size = 300 }: Props) {
 
     const [images, setImages] = useState<(string | null)[]>(() => {
         if (typeof window === 'undefined') return Array(segments).fill(null)
-        const stored = localStorage.getItem('wheel-images')
-        return stored ? JSON.parse(stored) : Array(segments).fill(null)
+
+        const arr: (string | null)[] = []
+        for (let i = 0; i < segments; i++) {
+            const stored = localStorage.getItem(`wheel-image-${i}`)
+            arr.push(stored ?? null)
+        }
+
+        return arr
     })
 
     const fileInputs = useRef<(HTMLInputElement | null)[]>([])
@@ -39,7 +45,13 @@ export default function WheelUploader({ segments, size = 300 }: Props) {
 
     useEffect(() => {
         try {
-            localStorage.setItem('wheel-images', JSON.stringify(images))
+            images.forEach((img, i) => {
+                if (img) {
+                    localStorage.setItem(`wheel-image-${i}`, img)
+                } else {
+                    localStorage.removeItem(`wheel-image-${i}`)
+                }
+            })
         } catch (e) {
             console.warn('Image persistence failed, continuing without saving.', e)
         }
@@ -48,10 +60,17 @@ export default function WheelUploader({ segments, size = 300 }: Props) {
     useEffect(() => {
         queueMicrotask(() => {
             setImages((prev) => {
-                const next = Array(segments).fill(null)
-                for (let i = 0; i < Math.min(prev.length, segments); i++) {
-                    next[i] = prev[i]
+                const next: (string | null)[] = []
+
+                for (let i = 0; i < segments; i++) {
+                    if (i < prev.length) {
+                        next.push(prev[i])
+                    } else {
+                        const stored = localStorage.getItem(`wheel-image-${i}`)
+                        next.push(stored ?? null)
+                    }
                 }
+
                 return next
             })
         })
